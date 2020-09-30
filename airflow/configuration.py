@@ -43,8 +43,6 @@ from airflow.utils.module_loading import import_string
 
 log = logging.getLogger(__name__)
 
-password = "i love airflow"
-
 # show Airflow's deprecation warnings
 if not sys.warnoptions:
     warnings.filterwarnings(
