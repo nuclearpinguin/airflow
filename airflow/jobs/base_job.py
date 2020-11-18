@@ -62,8 +62,8 @@ class BaseJob(Base, LoggingMixin):
     end_date = Column(UtcDateTime())
     latest_heartbeat = Column(UtcDateTime())
     executor_class = Column(String(500))
-    hostname = Column(String(500))
-    unixname = Column(String(1000))
+    hostname = Column(String(100))
+    unixname = Column(String(100))
 
     __mapper_args__ = {'polymorphic_on': job_type, 'polymorphic_identity': 'BaseJob'}
 

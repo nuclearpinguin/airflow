@@ -102,8 +102,8 @@ def upgrade():  # noqa: D103
             sa.Column('end_date', sa.DateTime(), nullable=True),
             sa.Column('latest_heartbeat', sa.DateTime(), nullable=True),
             sa.Column('executor_class', sa.String(length=500), nullable=True),
-            sa.Column('hostname', sa.String(length=500), nullable=True),
-            sa.Column('unixname', sa.String(length=1000), nullable=True),
+            sa.Column('hostname', sa.String(length=100), nullable=True),
+            sa.Column('unixname', sa.String(length=100), nullable=True),
             sa.PrimaryKeyConstraint('id'),
         )
         op.create_index('job_type_heart', 'job', ['job_type', 'latest_heartbeat'], unique=False)
@@ -151,8 +151,8 @@ def upgrade():  # noqa: D103
             sa.Column('duration', sa.Integer(), nullable=True),
             sa.Column('state', sa.String(length=20), nullable=True),
             sa.Column('try_number', sa.Integer(), nullable=True),
-            sa.Column('hostname', sa.String(length=1000), nullable=True),
-            sa.Column('unixname', sa.String(length=1000), nullable=True),
+            sa.Column('hostname', sa.String(length=100), nullable=True),
+            sa.Column('unixname', sa.String(length=100), nullable=True),
             sa.Column('job_id', sa.Integer(), nullable=True),
             sa.Column('pool', sa.String(length=50), nullable=True),
             sa.Column('queue', sa.String(length=50), nullable=True),
