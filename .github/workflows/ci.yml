@@ -940,10 +940,11 @@ jobs:
       - name: "Build PROD images ${{ matrix.python-version }}:${{ github.event.workflow_run.id }}"
         run: ./scripts/ci/images/ci_prepare_prod_image_on_ci.sh
         env:
+          AIRFLOW_PRE_CACHED_PIP_PACKAGES: false
           AIRFLOW_CONSTRAINTS_LOCATION: >
             ./docker-context-files/constraints-${{ matrix.python-version }}.txt
       - name: "Run PIP check"
-        run: ./scripts/ci/images/ci_check_prod_image_dependencies.sh
+        run: ./scripts/ci/images/ci_check_prod_image_depencencies.sh
 
   constraints-push:
     timeout-minutes: 10
