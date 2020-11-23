@@ -111,7 +111,6 @@ function output_all_basic_variables() {
     fi
 
     initialization::ga_output kubernetes-exclude '[]'
-    initialization::ga_output set_upgrade_to_latest_constraints 'false'
 }
 
 function get_changed_files() {
@@ -184,10 +183,6 @@ function set_basic_checks_only() {
     initialization::ga_output basic-checks-only "${@}"
 }
 
-function set_upgrade_to_latest_constraints() {
-    initialization::ga_output upgrade-to-leatest-constraints "${@}"
-}
-
 ALL_TESTS="Always Core Other API CLI Providers WWW Integration Heisentests"
 readonly ALL_TESTS
 
@@ -203,7 +198,6 @@ function set_outputs_run_everything_and_exit() {
     set_basic_checks_only "false"
     set_docs_build "true"
     set_image_build "true"
-    set_upgrade_to_latest_constraints "true"
     exit
 }
 
@@ -285,7 +279,7 @@ function count_changed_files() {
 function check_if_python_security_scans_should_be_run() {
     local pattern_array=(
         "^airflow/.*\.py"
-        "^setup\.py"
+        "^setup.py"
     )
     show_changed_files
 
@@ -363,20 +357,6 @@ function check_if_docs_should_be_generated() {
     else
         image_build_needed="true"
         docs_build_needed="true"
-    fi
-}
-
-function check_if_update_to_latest_constraints() {
-    local pattern_array=(
-        "^setup\.cfg"
-        "^setup\.py"
-    )
-    show_changed_files
-
-    if [[ $(count_changed_files) == "0" ]]; then
-        set_upgrade_to_latest_constraints "false"
-    else
-        set_upgrade_to_latest_constraints "true"
     fi
 }
 
@@ -568,9 +548,6 @@ fi
 
 readonly FULL_TESTS_NEEDED
 output_all_basic_variables
-echo
-echo "Running check for selective tests"
-echo
 
 image_build_needed="false"
 docs_build_needed="false"
@@ -586,7 +563,6 @@ check_if_api_codegen_should_be_run
 check_if_javascript_security_scans_should_be_run
 check_if_python_security_scans_should_be_run
 check_if_tests_are_needed_at_all
-check_if_update_to_latest_constraints
 get_count_all_files
 get_count_api_files
 get_count_cli_files

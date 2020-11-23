@@ -104,14 +104,5 @@ function verify_prod_image_has_airflow_and_providers {
     fi
 }
 
-function verify_prod_image_dependencies {
-    echo
-    echo "Checking if Airflow dependencies are compatible."
-    echo
-
-    docker run --rm --entrypoint /bin/bash "${AIRFLOW_PROD_IMAGE}" -c 'pip check'
-}
-
 build_prod_images_on_ci
 verify_prod_image_has_airflow_and_providers
-verify_prod_image_dependencies

@@ -917,10 +917,15 @@ jobs:
           name: 'constraints-${{matrix.python-version}}'
           path: './files/constraints-${{matrix.python-version}}/constraints-${{matrix.python-version}}.txt'
 
-  constraints-push:
-    timeout-minutes: 10
-    name: "Constraints push"
+  validate-dependencies:
+    timeout-minutes: 120
+    name: "Validate dependencies in PROD images"
     runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        python-version: ${{ fromJson(needs.build-info.outputs.pythonVersions) }}
+      fail-fast: false
+    if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/v1-10-test'
     needs:
       - build-info
       - constraints
@@ -930,6 +935,31 @@ jobs:
       - tests-mysql
       - tests-postgres
       - tests-kubernetes
+    steps:
+      - name: "Checkout ${{ github.ref }} ( ${{ github.sha }} )"
+        uses: actions/checkout@v2
+      - name: "Free space"
+        run: ./scripts/ci/tools/ci_free_space_on_ci.sh
+      - name: "Get all artifacts (constraints)"
+        uses: actions/download-artifact@v2
+        with:
+          path: 'artifacts'
+      - name: "Extract constraint files to ./docker-context-files"
+        run: cp -v ./artifacts/constraints-*/constraints*.txt ./docker-context-files
+      - name: "Build PROD images ${{ matrix.python-version }}:${{ github.event.workflow_run.id }}"
+        run: ./scripts/ci/images/ci_prepare_prod_image_on_ci.sh
+        env:
+          AIRFLOW_CONSTRAINTS_LOCATION: >
+            ./docker-context-files/constraints-${{ matrix.python-version }}.txt
+      - name: "Run PIP check"
+        run: ./scripts/ci/images/ci_check_prod_image_dependencies.sh
+
+  constraints-push:
+    timeout-minutes: 10
+    name: "Constraints push"
+    runs-on: ubuntu-20.04
+    needs:
+      - validate-dependencies
     if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/v1-10-test'
     steps:
       - name: "Checkout ${{ github.ref }} ( ${{ github.sha }} )"
