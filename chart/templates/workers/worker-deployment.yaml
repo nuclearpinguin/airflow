@@ -82,32 +82,6 @@ spec:
       imagePullSecrets:
         - name: {{ template "registry_secret" . }}
       {{- end }}
-      initContainers:
-      {{- if and $persistence .Values.workers.persistence.fixPermissions }}
-        - name: volume-permissions
-          image: {{ template "airflow_image" . }}
-          imagePullPolicy: {{ .Values.images.airflow.pullPolicy }}
-          command:
-            - chown
-            - -R
-            - "{{ .Values.uid }}:{{ .Values.gid }}"
-            - {{ template "airflow_logs" . }}
-          securityContext:
-            runAsUser: 0
-          volumeMounts:
-            - name: logs
-              mountPath: {{ template "airflow_logs" . }}
-      {{- end }}
-        - name: wait-for-airflow-migrations
-          image: {{ template "airflow_image" . }}
-          imagePullPolicy: {{ .Values.images.airflow.pullPolicy }}
-          args:
-          {{- include "wait-for-migrations-command" . | indent 10 }}
-          envFrom:
-          {{- include "custom_airflow_environment_from" . | default "\n  []" | indent 10 }}
-          env:
-          {{- include "custom_airflow_environment" . | indent 10 }}
-          {{- include "standard_airflow_environment" . | indent 10 }}
       containers:
         {{- if and (.Values.dags.gitSync.enabled) (not .Values.dags.persistence.enabled) }}
         {{- include "git_sync_container" . | indent 8 }}

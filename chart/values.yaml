@@ -153,9 +153,14 @@ images:
     pullPolicy: IfNotPresent
 
 # Environment variables for all airflow containers
-env: []
-# - name: ""
-#   value: ""
+env:
+  - name: "AIRFLOW__LOGGING__REMOTE_LOGGING"
+    value: "True"
+  - name: "AIRFLOW__LOGGING__REMOTE_LOG_CONN_ID"
+    value: "google_cloud_default"
+  - name: "AIRFLOW__LOGGING__REMOTE_BASE_LOG_FOLDER"
+    value: "gs://airflow-k8s-logs"
+
 
 # Secrets for all airflow containers
 secret: []
