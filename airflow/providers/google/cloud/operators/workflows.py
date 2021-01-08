@@ -18,6 +18,7 @@ import hashlib
 import json
 import re
 import uuid
+from datetime import datetime, timedelta
 from typing import Dict, Optional, Sequence, Tuple, Union
 
 from google.api_core.exceptions import AlreadyExists
@@ -551,6 +552,9 @@ class WorkflowExecutionsListExecutionsOperator(BaseOperator):
 
     :param workflow_id: Required. The ID of the workflow to be created.
     :type workflow_id: str
+    :param start_date_filter: If passed only executions older that this date will be returned.
+        By default operators return executions from last 60 minutes
+    :type start_date_filter: datetime
     :param project_id: Required. The ID of the Google Cloud project the cluster belongs to.
     :type project_id: str
     :param location: Required. The GCP region in which to handle the request.
@@ -572,6 +576,7 @@ class WorkflowExecutionsListExecutionsOperator(BaseOperator):
         *,
         workflow_id: str,
         location: str,
+        start_date_filter: Optional[datetime] = None,
         project_id: Optional[str] = None,
         retry: Optional[Retry] = None,
         timeout: Optional[float] = None,
@@ -584,6 +589,7 @@ class WorkflowExecutionsListExecutionsOperator(BaseOperator):
 
         self.workflow_id = workflow_id
         self.location = location
+        self.start_date_filter = start_date_filter or datetime.now() - timedelta(minutes=60)
         self.project_id = project_id
         self.retry = retry
         self.timeout = timeout
@@ -602,7 +608,9 @@ class WorkflowExecutionsListExecutionsOperator(BaseOperator):
             timeout=self.timeout,
             metadata=self.metadata,
         )
-        return [Execution.to_dict(e) for e in execution_iter]
+        return [
+            Execution.to_dict(e) for e in execution_iter if e.start_time.ToDatetime() > self.start_date_filter
+        ]
 
 
 class WorkflowExecutionsGetExecutionOperator(BaseOperator):

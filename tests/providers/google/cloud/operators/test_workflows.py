@@ -14,7 +14,7 @@
 # KIND, either express or implied.  See the License for the
 # specific language governing permissions and limitations
 # under the License.
-
+import datetime
 from unittest import mock
 
 from airflow.providers.google.cloud.operators.workflows import (
@@ -309,7 +309,11 @@ class TestWorkflowExecutionsListExecutionsOperator:
     @mock.patch(BASE_PATH.format("Execution"))
     @mock.patch(BASE_PATH.format("WorkflowsHook"))
     def test_execute(self, mock_hook, mock_object):
-        mock_hook.return_value.list_executions.return_value = [mock.MagicMixin()]
+        execution_mock = mock.MagicMock()
+        execution_mock.start_time.ToDatetime.return_value = datetime.datetime.now() + datetime.timedelta(
+            minutes=5
+        )
+        mock_hook.return_value.list_executions.return_value = [execution_mock]
 
         op = WorkflowExecutionsListExecutionsOperator(
             task_id="test_task",
