@@ -42,6 +42,10 @@ class WorkflowsCreateWorkflowOperator(BaseOperator):
     running operation will return
     [ALREADY_EXISTS][google.rpc.Code.ALREADY_EXISTS] error.
 
+    .. seealso::
+        For more information on how to use this operator, take a look at the guide:
+        :ref:`howto/operator:WorkflowsCreateWorkflowOperator`
+
     :param workflow: Required. Workflow to be created.
     :type workflow: Dict
     :param workflow_id: Required. The ID of the workflow to be created.
@@ -115,7 +119,7 @@ class WorkflowsCreateWorkflowOperator(BaseOperator):
 
         self.log.info("Creating workflow")
         try:
-            workflow = hook.create_workflow(
+            operation = hook.create_workflow(
                 workflow=self.workflow,
                 workflow_id=workflow_id,
                 location=self.location,
@@ -124,7 +128,7 @@ class WorkflowsCreateWorkflowOperator(BaseOperator):
                 timeout=self.timeout,
                 metadata=self.metadata,
             )
-            workflow.result()
+            workflow = operation.result()
         except AlreadyExists:
             workflow = hook.get_workflow(
                 workflow_id=workflow_id,
@@ -145,6 +149,10 @@ class WorkflowsUpdateWorkflowOperator(BaseOperator):
     workflow may be created as a result of a successful
     update operation. In that case, such revision will be
     used in new workflow executions.
+
+    .. seealso::
+        For more information on how to use this operator, take a look at the guide:
+        :ref:`howto/operator:WorkflowsUpdateWorkflowOperator`
 
     :param workflow_id: Required. The ID of the workflow to be updated.
     :type workflow_id: str
@@ -213,8 +221,8 @@ class WorkflowsUpdateWorkflowOperator(BaseOperator):
             timeout=self.timeout,
             metadata=self.metadata,
         )
-        operation.result()
-        return Workflow.to_dict(operation)
+        workflow = operation.result()
+        return Workflow.to_dict(workflow)
 
 
 class WorkflowsDeleteWorkflowOperator(BaseOperator):
@@ -222,6 +230,10 @@ class WorkflowsDeleteWorkflowOperator(BaseOperator):
     Deletes a workflow with the specified name.
     This method also cancels and deletes all running
     executions of the workflow.
+
+    .. seealso::
+        For more information on how to use this operator, take a look at the guide:
+        :ref:`howto/operator:WorkflowsDeleteWorkflowOperator`
 
     :param workflow_id: Required. The ID of the workflow to be created.
     :type workflow_id: str
@@ -283,6 +295,10 @@ class WorkflowsListWorkflowsOperator(BaseOperator):
     """
     Lists Workflows in a given project and location.
     The default order is not specified.
+
+    .. seealso::
+        For more information on how to use this operator, take a look at the guide:
+        :ref:`howto/operator:WorkflowsListWorkflowsOperator`
 
     :param filter_: Filter to restrict results to specific workflows.
     :type filter_: str
@@ -352,6 +368,10 @@ class WorkflowsGetWorkflowOperator(BaseOperator):
     """
     Gets details of a single Workflow.
 
+    .. seealso::
+        For more information on how to use this operator, take a look at the guide:
+        :ref:`howto/operator:WorkflowsGetWorkflowOperator`
+
     :param workflow_id: Required. The ID of the workflow to be created.
     :type workflow_id: str
     :param project_id: Required. The ID of the Google Cloud project the cluster belongs to.
@@ -408,10 +428,14 @@ class WorkflowsGetWorkflowOperator(BaseOperator):
         return Workflow.to_dict(workflow)
 
 
-class WorkflowExecutionsCreateExecutionOperator(BaseOperator):
+class WorkflowsCreateExecutionOperator(BaseOperator):
     """
     Creates a new execution using the latest revision of
     the given workflow.
+
+    .. seealso::
+        For more information on how to use this operator, take a look at the guide:
+        :ref:`howto/operator:WorkflowsCreateExecutionOperator`
 
     :param execution: Required. Execution to be created.
     :type execution: Dict
@@ -477,9 +501,13 @@ class WorkflowExecutionsCreateExecutionOperator(BaseOperator):
         return Execution.to_dict(execution)
 
 
-class WorkflowExecutionsCancelExecutionOperator(BaseOperator):
+class WorkflowsCancelExecutionOperator(BaseOperator):
     """
     Cancels an execution using the given ``workflow_id`` and ``execution_id``.
+
+    .. seealso::
+        For more information on how to use this operator, take a look at the guide:
+        :ref:`howto/operator:WorkflowsCancelExecutionOperator`
 
     :param workflow_id: Required. The ID of the workflow.
     :type workflow_id: str
@@ -542,13 +570,17 @@ class WorkflowExecutionsCancelExecutionOperator(BaseOperator):
         return Execution.to_dict(execution)
 
 
-class WorkflowExecutionsListExecutionsOperator(BaseOperator):
+class WorkflowsListExecutionsOperator(BaseOperator):
     """
     Returns a list of executions which belong to the
     workflow with the given name. The method returns
     executions of all workflow revisions. Returned
     executions are ordered by their start time (newest
     first).
+
+    .. seealso::
+        For more information on how to use this operator, take a look at the guide:
+        :ref:`howto/operator:WorkflowsListExecutionsOperator`
 
     :param workflow_id: Required. The ID of the workflow to be created.
     :type workflow_id: str
@@ -613,9 +645,13 @@ class WorkflowExecutionsListExecutionsOperator(BaseOperator):
         ]
 
 
-class WorkflowExecutionsGetExecutionOperator(BaseOperator):
+class WorkflowsGetExecutionOperator(BaseOperator):
     """
     Returns an execution for the given ``workflow_id`` and ``execution_id``.
+
+    .. seealso::
+        For more information on how to use this operator, take a look at the guide:
+        :ref:`howto/operator:WorkflowsGetExecutionOperator`
 
     :param workflow_id: Required. The ID of the workflow.
     :type workflow_id: str

@@ -18,13 +18,13 @@ import datetime
 from unittest import mock
 
 from airflow.providers.google.cloud.operators.workflows import (
-    WorkflowExecutionsCancelExecutionOperator,
-    WorkflowExecutionsCreateExecutionOperator,
-    WorkflowExecutionsGetExecutionOperator,
-    WorkflowExecutionsListExecutionsOperator,
+    WorkflowsCancelExecutionOperator,
+    WorkflowsCreateExecutionOperator,
     WorkflowsCreateWorkflowOperator,
     WorkflowsDeleteWorkflowOperator,
+    WorkflowsGetExecutionOperator,
     WorkflowsGetWorkflowOperator,
+    WorkflowsListExecutionsOperator,
     WorkflowsListWorkflowsOperator,
     WorkflowsUpdateWorkflowOperator,
 )
@@ -234,10 +234,10 @@ class TestWorkflowsGetWorkflowOperator:
 class TestWorkflowExecutionsCreateExecutionOperator:
     @mock.patch(BASE_PATH.format("Execution"))
     @mock.patch(BASE_PATH.format("WorkflowsHook"))
-    @mock.patch(BASE_PATH.format("WorkflowExecutionsCreateExecutionOperator.xcom_push"))
+    @mock.patch(BASE_PATH.format("WorkflowsCreateExecutionOperator.xcom_push"))
     def test_execute(self, mock_xcom, mock_hook, mock_object):
         mock_hook.return_value.create_execution.return_value.name = "name/execution_id"
-        op = WorkflowExecutionsCreateExecutionOperator(
+        op = WorkflowsCreateExecutionOperator(
             task_id="test_task",
             workflow_id=WORKFLOW_ID,
             execution=EXECUTION,
@@ -273,7 +273,7 @@ class TestWorkflowExecutionsCancelExecutionOperator:
     @mock.patch(BASE_PATH.format("Execution"))
     @mock.patch(BASE_PATH.format("WorkflowsHook"))
     def test_execute(self, mock_hook, mock_object):
-        op = WorkflowExecutionsCancelExecutionOperator(
+        op = WorkflowsCancelExecutionOperator(
             task_id="test_task",
             workflow_id=WORKFLOW_ID,
             execution_id=EXECUTION_ID,
@@ -315,7 +315,7 @@ class TestWorkflowExecutionsListExecutionsOperator:
         )
         mock_hook.return_value.list_executions.return_value = [execution_mock]
 
-        op = WorkflowExecutionsListExecutionsOperator(
+        op = WorkflowsListExecutionsOperator(
             task_id="test_task",
             workflow_id=WORKFLOW_ID,
             location=LOCATION,
@@ -349,7 +349,7 @@ class TestWorkflowExecutionsGetExecutionOperator:
     @mock.patch(BASE_PATH.format("Execution"))
     @mock.patch(BASE_PATH.format("WorkflowsHook"))
     def test_execute(self, mock_hook, mock_object):
-        op = WorkflowExecutionsGetExecutionOperator(
+        op = WorkflowsGetExecutionOperator(
             task_id="test_task",
             workflow_id=WORKFLOW_ID,
             execution_id=EXECUTION_ID,

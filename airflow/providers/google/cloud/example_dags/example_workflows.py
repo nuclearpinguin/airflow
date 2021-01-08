@@ -19,13 +19,13 @@ import os
 
 from airflow import DAG
 from airflow.providers.google.cloud.operators.workflows import (
-    WorkflowExecutionsCancelExecutionOperator,
-    WorkflowExecutionsCreateExecutionOperator,
-    WorkflowExecutionsGetExecutionOperator,
-    WorkflowExecutionsListExecutionsOperator,
+    WorkflowsCancelExecutionOperator,
+    WorkflowsCreateExecutionOperator,
     WorkflowsCreateWorkflowOperator,
     WorkflowsDeleteWorkflowOperator,
+    WorkflowsGetExecutionOperator,
     WorkflowsGetWorkflowOperator,
+    WorkflowsListExecutionsOperator,
     WorkflowsListWorkflowsOperator,
     WorkflowsUpdateWorkflowOperator,
 )
@@ -37,6 +37,7 @@ PROJECT_ID = os.environ.get("GCP_PROJECT_ID", "an-id")
 
 WORKFLOW_ID = "airflow-test-workflow"
 
+# [START how_to_define_workflow]
 WORKFLOW_CONTENT = """
 - getCurrentTime:
     call: http.get
@@ -60,11 +61,13 @@ WORKFLOW = {
     "labels": {"airflow-version": "dev"},
     "source_contents": WORKFLOW_CONTENT,
 }
+# [START how_to_define_workflow]
 
 EXECUTION = {"argument": ""}
 
 
 with DAG("example_cloud_workflows", start_date=days_ago(1), schedule_interval=None) as dag:
+    # [START how_to_create_workflow]
     create_workflow = WorkflowsCreateWorkflowOperator(
         task_id="create_workflow",
         location=LOCATION,
@@ -72,30 +75,46 @@ with DAG("example_cloud_workflows", start_date=days_ago(1), schedule_interval=No
         workflow=WORKFLOW,
         workflow_id=WORKFLOW_ID,
     )
+    # [END how_to_create_workflow]
+
+    # [START how_to_update_workflows]
     update_workflows = WorkflowsUpdateWorkflowOperator(
         task_id="update_workflows",
         location=LOCATION,
         project_id=PROJECT_ID,
         workflow_id=WORKFLOW_ID,
     )
+    # [END how_to_update_workflows]
 
+    # [START how_to_get_workflow]
     get_workflow = WorkflowsGetWorkflowOperator(
         task_id="get_workflow", location=LOCATION, project_id=PROJECT_ID, workflow_id=WORKFLOW_ID
     )
+    # [END how_to_get_workflow]
+
+    # [START how_to_list_workflows]
     list_workflows = WorkflowsListWorkflowsOperator(
         task_id="list_workflows", location=LOCATION, project_id=PROJECT_ID, filter_="airflow"
     )
+    # [END how_to_list_workflows]
+
+    # [START how_to_delete_workflow]
     delete_workflow = WorkflowsDeleteWorkflowOperator(
         task_id="delete_workflow", location=LOCATION, project_id=PROJECT_ID, workflow_id=WORKFLOW_ID
     )
+    # [END how_to_delete_workflow]
 
-    create_execution = WorkflowExecutionsCreateExecutionOperator(
+    # [START how_to_create_execution]
+    create_execution = WorkflowsCreateExecutionOperator(
         task_id="create_execution",
         location=LOCATION,
         project_id=PROJECT_ID,
         execution=EXECUTION,
         workflow_id=WORKFLOW_ID,
     )
+    # [END how_to_create_execution]
+
+    # [START how_to_wait_for_execution]
     wait_for_execution = WorkflowExecutionSensor(
         task_id="wait_for_execution",
         location=LOCATION,
@@ -103,31 +122,41 @@ with DAG("example_cloud_workflows", start_date=days_ago(1), schedule_interval=No
         workflow_id=WORKFLOW_ID,
         execution_id=create_execution.output["execution_id"],
     )
-    get_execution = WorkflowExecutionsGetExecutionOperator(
+    # [END how_to_wait_for_execution]
+
+    # [START how_to_get_execution]
+    get_execution = WorkflowsGetExecutionOperator(
         task_id="get_execution",
         location=LOCATION,
         project_id=PROJECT_ID,
         workflow_id=WORKFLOW_ID,
         execution_id=create_execution.output["execution_id"],
     )
-    list_executions = WorkflowExecutionsListExecutionsOperator(
+    # [END how_to_get_execution]
+
+    # [START how_to_list_executions]
+    list_executions = WorkflowsListExecutionsOperator(
         task_id="list_executions", location=LOCATION, project_id=PROJECT_ID, workflow_id=WORKFLOW_ID
     )
+    # [END how_to_list_executions]
 
-    create_execution_for_cancel = WorkflowExecutionsCreateExecutionOperator(
+    create_execution_for_cancel = WorkflowsCreateExecutionOperator(
         task_id="create_execution_for_cancel",
         location=LOCATION,
         project_id=PROJECT_ID,
         execution=EXECUTION,
         workflow_id=WORKFLOW_ID,
     )
-    cancel_execution = WorkflowExecutionsCancelExecutionOperator(
+
+    # [START how_to_cancel_execution]
+    cancel_execution = WorkflowsCancelExecutionOperator(
         task_id="cancel_execution",
         location=LOCATION,
         project_id=PROJECT_ID,
         workflow_id=WORKFLOW_ID,
         execution_id=create_execution_for_cancel.output["execution_id"],
     )
+    # [END how_to_cancel_execution]
 
     create_workflow >> update_workflows >> [get_workflow, list_workflows]
     update_workflows >> [create_execution, create_execution_for_cancel]
