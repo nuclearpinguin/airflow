@@ -32,10 +32,10 @@ from airflow.providers.google.cloud.operators.workflows import (
 from airflow.providers.google.cloud.sensors.workflows import WorkflowExecutionSensor
 from airflow.utils.dates import days_ago
 
-LOCATION = os.environ.get("GCP_LOCATION", "us-central1")
+LOCATION = os.environ.get("GCP_WORKFLOWS_LOCATION", "us-central1")
 PROJECT_ID = os.environ.get("GCP_PROJECT_ID", "an-id")
 
-WORKFLOW_ID = "airflow-test-workflow"
+WORKFLOW_ID = os.getenv("GCP_WORKFLOWS_WORKFLOW_ID", "airflow-test-workflow")
 
 # [START how_to_define_workflow]
 WORKFLOW_CONTENT = """
