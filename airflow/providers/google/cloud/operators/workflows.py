@@ -174,8 +174,8 @@ class WorkflowsUpdateWorkflowOperator(BaseOperator):
     :type metadata: Sequence[Tuple[str, str]]
     """
 
-    template_fields = ("workflow_id",)
-    template_fields_renderers = {"workflow": "json"}
+    template_fields = ("workflow_id", "update_mask")
+    template_fields_renderers = {"update_mask": "json"}
 
     def __init__(
         self,

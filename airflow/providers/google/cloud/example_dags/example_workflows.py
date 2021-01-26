@@ -98,6 +98,7 @@ with DAG("example_cloud_workflows", start_date=days_ago(1), schedule_interval=No
         location=LOCATION,
         project_id=PROJECT_ID,
         workflow_id=WORKFLOW_ID,
+        update_mask={"paths": ["name", "description"]}
     )
     # [END how_to_update_workflows]
 
