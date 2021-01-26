@@ -260,7 +260,7 @@ class WorkflowsHook(GoogleBaseHook):
         Creates a new execution using the latest revision of
         the given workflow.
 
-        :param execution: Required. Execution to be created.
+        :param execution: Required. Input parameters of the execution represented as a dictionary.
         :type execution: Dict
         :param workflow_id: Required. The ID of the workflow.
         :type workflow_id: str
