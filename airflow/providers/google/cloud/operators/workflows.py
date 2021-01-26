@@ -21,6 +21,7 @@ import uuid
 from datetime import datetime, timedelta
 from typing import Dict, Optional, Sequence, Tuple, Union
 
+import pytz
 from google.api_core.exceptions import AlreadyExists
 from google.api_core.retry import Retry
 
@@ -280,7 +281,7 @@ class WorkflowsDeleteWorkflowOperator(BaseOperator):
     def execute(self, context):
         hook = WorkflowsHook(gcp_conn_id=self.gcp_conn_id, impersonation_chain=self.impersonation_chain)
         self.log.info("Deleting workflow %s", self.workflow_id)
-        workflow = hook.delete_workflow(
+        operation = hook.delete_workflow(
             workflow_id=self.workflow_id,
             location=self.location,
             project_id=self.project_id,
@@ -288,7 +289,7 @@ class WorkflowsDeleteWorkflowOperator(BaseOperator):
             timeout=self.timeout,
             metadata=self.metadata,
         )
-        return Workflow.to_dict(workflow)
+        operation.result()
 
 
 class WorkflowsListWorkflowsOperator(BaseOperator):
@@ -621,7 +622,7 @@ class WorkflowsListExecutionsOperator(BaseOperator):
 
         self.workflow_id = workflow_id
         self.location = location
-        self.start_date_filter = start_date_filter or datetime.now() - timedelta(minutes=60)
+        self.start_date_filter = start_date_filter or datetime.now(tz=pytz.UTC) - timedelta(minutes=60)
         self.project_id = project_id
         self.retry = retry
         self.timeout = timeout
@@ -640,9 +641,8 @@ class WorkflowsListExecutionsOperator(BaseOperator):
             timeout=self.timeout,
             metadata=self.metadata,
         )
-        return [
-            Execution.to_dict(e) for e in execution_iter if e.start_time.ToDatetime() > self.start_date_filter
-        ]
+
+        return [Execution.to_dict(e) for e in execution_iter if e.start_time > self.start_date_filter]
 
 
 class WorkflowsGetExecutionOperator(BaseOperator):

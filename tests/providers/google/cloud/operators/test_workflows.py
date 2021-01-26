@@ -17,6 +17,8 @@
 import datetime
 from unittest import mock
 
+import pytz
+
 from airflow.providers.google.cloud.operators.workflows import (
     WorkflowsCancelExecutionOperator,
     WorkflowsCreateExecutionOperator,
@@ -126,9 +128,11 @@ class TestWorkflowsUpdateWorkflowOperator:
 
 
 class TestWorkflowsDeleteWorkflowOperator:
-    @mock.patch(BASE_PATH.format("Workflow"))
     @mock.patch(BASE_PATH.format("WorkflowsHook"))
-    def test_execute(self, mock_hook, mock_object):
+    def test_execute(
+        self,
+        mock_hook,
+    ):
         op = WorkflowsDeleteWorkflowOperator(
             task_id="test_task",
             workflow_id=WORKFLOW_ID,
@@ -140,7 +144,7 @@ class TestWorkflowsDeleteWorkflowOperator:
             gcp_conn_id=GCP_CONN_ID,
             impersonation_chain=IMPERSONATION_CHAIN,
         )
-        result = op.execute({})
+        op.execute({})
 
         mock_hook.assert_called_once_with(
             gcp_conn_id=GCP_CONN_ID,
@@ -156,14 +160,14 @@ class TestWorkflowsDeleteWorkflowOperator:
             metadata=METADATA,
         )
 
-        assert result == mock_object.to_dict.return_value
-
 
 class TestWorkflowsListWorkflowsOperator:
     @mock.patch(BASE_PATH.format("Workflow"))
     @mock.patch(BASE_PATH.format("WorkflowsHook"))
     def test_execute(self, mock_hook, mock_object):
-        mock_hook.return_value.list_workflows.return_value = [mock.MagicMixin()]
+        workflow_mock = mock.MagicMock()
+        workflow_mock.start_time = datetime.datetime.now(tz=pytz.UTC) + datetime.timedelta(minutes=5)
+        mock_hook.return_value.list_workflows.return_value = [workflow_mock]
 
         op = WorkflowsListWorkflowsOperator(
             task_id="test_task",
@@ -310,9 +314,7 @@ class TestWorkflowExecutionsListExecutionsOperator:
     @mock.patch(BASE_PATH.format("WorkflowsHook"))
     def test_execute(self, mock_hook, mock_object):
         execution_mock = mock.MagicMock()
-        execution_mock.start_time.ToDatetime.return_value = datetime.datetime.now() + datetime.timedelta(
-            minutes=5
-        )
+        execution_mock.start_time = datetime.datetime.now(tz=pytz.UTC) + datetime.timedelta(minutes=5)
         mock_hook.return_value.list_executions.return_value = [execution_mock]
 
         op = WorkflowsListExecutionsOperator(

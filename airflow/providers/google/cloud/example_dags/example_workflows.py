@@ -65,6 +65,21 @@ WORKFLOW = {
 
 EXECUTION = {"argument": ""}
 
+SLEEP_WORKFLOW_ID = "sleep_workflow"
+SLEEP_WORKFLOW_CONTENT = """
+- someSleep:
+    call: sys.sleep
+    args:
+        seconds: 120
+"""
+
+SLEEP_WORKFLOW = {
+    "description": "Test workflow",
+    "labels": {"airflow-version": "dev"},
+    "source_contents": SLEEP_WORKFLOW_CONTENT,
+}
+# [START how_to_define_workflow]
+
 
 with DAG("example_cloud_workflows", start_date=days_ago(1), schedule_interval=None) as dag:
     # [START how_to_create_workflow]
@@ -94,7 +109,9 @@ with DAG("example_cloud_workflows", start_date=days_ago(1), schedule_interval=No
 
     # [START how_to_list_workflows]
     list_workflows = WorkflowsListWorkflowsOperator(
-        task_id="list_workflows", location=LOCATION, project_id=PROJECT_ID, filter_="airflow"
+        task_id="list_workflows",
+        location=LOCATION,
+        project_id=PROJECT_ID,
     )
     # [END how_to_list_workflows]
 
@@ -140,12 +157,20 @@ with DAG("example_cloud_workflows", start_date=days_ago(1), schedule_interval=No
     )
     # [END how_to_list_executions]
 
+    create_workflow_for_cancel = WorkflowsCreateWorkflowOperator(
+        task_id="create_workflow_for_cancel",
+        location=LOCATION,
+        project_id=PROJECT_ID,
+        workflow=SLEEP_WORKFLOW,
+        workflow_id=SLEEP_WORKFLOW_ID,
+    )
+
     create_execution_for_cancel = WorkflowsCreateExecutionOperator(
         task_id="create_execution_for_cancel",
         location=LOCATION,
         project_id=PROJECT_ID,
         execution=EXECUTION,
-        workflow_id=WORKFLOW_ID,
+        workflow_id=SLEEP_WORKFLOW_ID,
     )
 
     # [START how_to_cancel_execution]
@@ -153,7 +178,7 @@ with DAG("example_cloud_workflows", start_date=days_ago(1), schedule_interval=No
         task_id="cancel_execution",
         location=LOCATION,
         project_id=PROJECT_ID,
-        workflow_id=WORKFLOW_ID,
+        workflow_id=SLEEP_WORKFLOW_ID,
         execution_id=create_execution_for_cancel.output["execution_id"],
     )
     # [END how_to_cancel_execution]
@@ -162,11 +187,6 @@ with DAG("example_cloud_workflows", start_date=days_ago(1), schedule_interval=No
     update_workflows >> [create_execution, create_execution_for_cancel]
 
     create_execution >> wait_for_execution >> [get_execution, list_executions]
-    create_execution_for_cancel >> cancel_execution
+    create_workflow_for_cancel >> create_execution_for_cancel >> cancel_execution
 
     [cancel_execution, list_executions] >> delete_workflow
-
-
-if __name__ == '__main__':
-    dag.clear(dag_run_state=None)
-    dag.run()
