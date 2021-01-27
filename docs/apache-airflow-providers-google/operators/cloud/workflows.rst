@@ -44,18 +44,18 @@ To create a workflow use
 :class:`~airflow.providers.google.cloud.operators.dataproc.WorkflowsCreateWorkflowOperator`.
 
 .. exampleinclude:: /../../airflow/providers/google/cloud/example_dags/example_workflows.py
-    :language: python
-    :dedent: 4
-    :start-after: [START how_to_create_workflow]
-    :end-before: [END how_to_create_workflow]
+      :language: python
+      :dedent: 4
+      :start-after: [START how_to_create_workflow]
+      :end-before: [END how_to_create_workflow]
 
 The workflow should be define in similar why to this example:
 
 .. exampleinclude:: /../../airflow/providers/google/cloud/example_dags/example_workflows.py
-    :language: python
-    :dedent: 4
-    :start-after: [START how_to_define_workflow]
-    :end-before: [END how_to_define_workflow]
+      :language: python
+      :dedent: 0
+      :start-after: [START how_to_define_workflow]
+      :end-before: [END how_to_define_workflow]
 
 For more information about authoring workflows check official
 production documentation `<Product documentation <https://cloud.google.com/workflows/docs/overview>`__.
@@ -70,10 +70,10 @@ To update a workflow use
 :class:`~airflow.providers.google.cloud.operators.dataproc.WorkflowsUpdateWorkflowOperator`.
 
 .. exampleinclude:: /../../airflow/providers/google/cloud/example_dags/example_workflows.py
-    :language: python
-    :dedent: 4
-    :start-after: [START how_to_update_workflow]
-    :end-before: [END how_to_update_workflow]
+      :language: python
+      :dedent: 4
+      :start-after: [START how_to_update_workflow]
+      :end-before: [END how_to_update_workflow]
 
 .. _howto/operator:WorkflowsGetWorkflowOperator:
 
@@ -84,10 +84,10 @@ To get a workflow use
 :class:`~airflow.providers.google.cloud.operators.dataproc.WorkflowsGetWorkflowOperator`.
 
 .. exampleinclude:: /../../airflow/providers/google/cloud/example_dags/example_workflows.py
-    :language: python
-    :dedent: 4
-    :start-after: [START how_to_get_workflow]
-    :end-before: [END how_to_get_workflow]
+      :language: python
+      :dedent: 4
+      :start-after: [START how_to_get_workflow]
+      :end-before: [END how_to_get_workflow]
 
 .. _howto/operator:WorkflowsListWorkflowsOperator:
 
@@ -98,10 +98,10 @@ To list workflows use
 :class:`~airflow.providers.google.cloud.operators.dataproc.WorkflowsListWorkflowsOperator`.
 
 .. exampleinclude:: /../../airflow/providers/google/cloud/example_dags/example_workflows.py
-    :language: python
-    :dedent: 4
-    :start-after: [START how_to_list_workflow]
-    :end-before: [END how_to_list_workflow]
+      :language: python
+      :dedent: 4
+      :start-after: [START how_to_list_workflow]
+      :end-before: [END how_to_list_workflow]
 
 .. _howto/operator:WorkflowsDeleteWorkflowOperator:
 
@@ -112,10 +112,10 @@ To delete a workflow use
 :class:`~airflow.providers.google.cloud.operators.dataproc.WorkflowsDeleteWorkflowOperator`.
 
 .. exampleinclude:: /../../airflow/providers/google/cloud/example_dags/example_workflows.py
-    :language: python
-    :dedent: 4
-    :start-after: [START how_to_delete_workflow]
-    :end-before: [END how_to_delete_workflow]
+      :language: python
+      :dedent: 4
+      :start-after: [START how_to_delete_workflow]
+      :end-before: [END how_to_delete_workflow]
 
 .. _howto/operator:WorkflowsCreateExecutionOperator:
 
@@ -127,19 +127,19 @@ To create an execution use
 This operator is not idempotent due to API limitation.
 
 .. exampleinclude:: /../../airflow/providers/google/cloud/example_dags/example_workflows.py
-    :language: python
-    :dedent: 4
-    :start-after: [START how_to_create_execution]
-    :end-before: [END how_to_create_execution]
+      :language: python
+      :dedent: 4
+      :start-after: [START how_to_create_execution]
+      :end-before: [END how_to_create_execution]
 
 The create operator does not wait for execution to complete. To wait for execution result use
 :class:`~airflow.providers.google.cloud.operators.dataproc.WorkflowExecutionSensor`.
 
 .. exampleinclude:: /../../airflow/providers/google/cloud/example_dags/example_workflows.py
-    :language: python
-    :dedent: 4
-    :start-after: [START how_to_wait_for_execution]
-    :end-before: [END how_to_wait_for_execution]
+      :language: python
+      :dedent: 4
+      :start-after: [START how_to_wait_for_execution]
+      :end-before: [END how_to_wait_for_execution]
 
 .. _howto/operator:WorkflowsGetExecutionOperator:
 
@@ -150,10 +150,10 @@ To get an execution use
 :class:`~airflow.providers.google.cloud.operators.dataproc.WorkflowsGetExecutionOperator`.
 
 .. exampleinclude:: /../../airflow/providers/google/cloud/example_dags/example_workflows.py
-    :language: python
-    :dedent: 4
-    :start-after: [START how_to_get_execution]
-    :end-before: [END how_to_get_execution]
+      :language: python
+      :dedent: 4
+      :start-after: [START how_to_get_execution]
+      :end-before: [END how_to_get_execution]
 
 .. _howto/operator:WorkflowsListExecutionsOperator:
 
@@ -165,10 +165,10 @@ To list executions use
 By default this operator will return only executions for last 60 minutes.
 
 .. exampleinclude:: /../../airflow/providers/google/cloud/example_dags/example_workflows.py
-    :language: python
-    :dedent: 4
-    :start-after: [START how_to_list_execution]
-    :end-before: [END how_to_list_execution]
+      :language: python
+      :dedent: 4
+      :start-after: [START how_to_list_execution]
+      :end-before: [END how_to_list_execution]
 
 .. _howto/operator:WorkflowsCancelExecutionOperator:
 
@@ -179,7 +179,7 @@ To cancel an execution use
 :class:`~airflow.providers.google.cloud.operators.dataproc.WorkflowsCancelExecutionOperator`.
 
 .. exampleinclude:: /../../airflow/providers/google/cloud/example_dags/example_workflows.py
-    :language: python
-    :dedent: 4
-    :start-after: [START how_to_cancel_execution]
-    :end-before: [END how_to_cancel_execution]
+      :language: python
+      :dedent: 4
+      :start-after: [START how_to_cancel_execution]
+      :end-before: [END how_to_cancel_execution]

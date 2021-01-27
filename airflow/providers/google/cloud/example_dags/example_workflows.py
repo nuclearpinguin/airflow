@@ -137,7 +137,7 @@ with DAG("example_cloud_workflows", start_date=days_ago(1), schedule_interval=No
         location=LOCATION,
         project_id=PROJECT_ID,
         workflow_id=WORKFLOW_ID,
-        execution_id=create_execution.output["execution_id"],
+        execution_id='{{ task_instance.xcom_pull("create_execution", key="execution_id") }}',
     )
     # [END how_to_wait_for_execution]
 
@@ -147,7 +147,7 @@ with DAG("example_cloud_workflows", start_date=days_ago(1), schedule_interval=No
         location=LOCATION,
         project_id=PROJECT_ID,
         workflow_id=WORKFLOW_ID,
-        execution_id=create_execution.output["execution_id"],
+        execution_id='{{ task_instance.xcom_pull("create_execution", key="execution_id") }}',
     )
     # [END how_to_get_execution]
 
@@ -179,7 +179,7 @@ with DAG("example_cloud_workflows", start_date=days_ago(1), schedule_interval=No
         location=LOCATION,
         project_id=PROJECT_ID,
         workflow_id=SLEEP_WORKFLOW_ID,
-        execution_id=create_execution_for_cancel.output["execution_id"],
+        execution_id='{{ task_instance.xcom_pull("create_execution_for_cancel", key="execution_id") }}',
     )
     # [END how_to_cancel_execution]
 
@@ -190,3 +190,8 @@ with DAG("example_cloud_workflows", start_date=days_ago(1), schedule_interval=No
     create_workflow_for_cancel >> create_execution_for_cancel >> cancel_execution
 
     [cancel_execution, list_executions] >> delete_workflow
+
+
+if __name__ == '__main__':
+    dag.clear(dag_run_state=None)
+    dag.run()
