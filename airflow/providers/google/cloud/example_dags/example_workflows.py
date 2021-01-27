@@ -61,7 +61,7 @@ WORKFLOW = {
     "labels": {"airflow-version": "dev"},
     "source_contents": WORKFLOW_CONTENT,
 }
-# [START how_to_define_workflow]
+# [END how_to_define_workflow]
 
 EXECUTION = {"argument": ""}
 
@@ -78,7 +78,6 @@ SLEEP_WORKFLOW = {
     "labels": {"airflow-version": "dev"},
     "source_contents": SLEEP_WORKFLOW_CONTENT,
 }
-# [START how_to_define_workflow]
 
 
 with DAG("example_cloud_workflows", start_date=days_ago(1), schedule_interval=None) as dag:
